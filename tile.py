@@ -71,6 +71,10 @@ class Arrow:
     for shape in self.arrow:
       shape.draw(win)
 
+  def undraw(self):
+    for shape in self.arrow:
+      shape.undraw()
+
 class Tile:
   def __init__(self, center, radius, direction):
     self.center = center
@@ -90,3 +94,7 @@ class Tile:
   def draw(self, win):
     self.tile.draw(win)
     self.arrow.draw(win)
+
+  def undraw(self):
+    self.tile.undraw()
+    self.arrow.undraw()

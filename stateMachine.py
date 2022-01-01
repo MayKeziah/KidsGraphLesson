@@ -50,12 +50,14 @@ class StateMachine:
     self.roomba = Roomba(self.startPosition, self.radius)
     self.room = Room(width, height, self.startPosition)
 
-    self.exit = Button(g.Point(width - 0.5, height - 0.25), g.Point(width - 0.2, height), 'Exit')
     self.modeManual = 'Mode: Manual'
     self.modeAuto = 'Mode: Auto'
-    self.manualToggle = Button(g.Point(width - 2, height - 0.25), g.Point(width - 1, height), self.modeManual)
+    self.modeBtn = Button(g.Point(width - 2, height - 0.25), g.Point(width - 1, height), self.modeManual)
     self.manual = True
-    self.buttons = [self.exit, self.manualToggle]
+
+    self.exitBtn = Button(g.Point(width - 0.5, height - 0.25), g.Point(width - 0.2, height), 'Exit')
+    self.resetBtn = Button(g.Point(width - 3.5, height - 0.25), g.Point(width - 2.5, height), 'Reset')
+    self.buttons = [self.modeBtn, self.exitBtn, self.resetBtn]
 
     self.__initWindow()
     self.start()
@@ -82,6 +84,10 @@ class StateMachine:
           if (agent.exitCommandRecieved):
             break
           self.window.checkKey()
+  
+  def reset(self):
+    self.room.reset()
+    self.roomba.reset()
 
   def checkMouse(self):
     # print('check mouse')
@@ -89,17 +95,20 @@ class StateMachine:
     if (mouse is None):
       return Mouse.ELSE
 
-    if(self.exit.clicked(mouse)): 
+    if(self.exitBtn.clicked(mouse)): 
       self.close()
       return Mouse.EXIT
 
-    if(self.manualToggle.clicked(mouse)):
+    if(self.modeBtn.clicked(mouse)):
       self.manual = not self.manual
       if(self.manual):
-        self.manualToggle.text.setText(self.modeManual)
+        self.modeBtn.text.setText(self.modeManual)
       else:
-        self.manualToggle.text.setText(self.modeAuto)
+        self.modeBtn.text.setText(self.modeAuto)
       return Mouse.MODE
+
+    if(self.resetBtn.clicked(mouse)):
+      self.reset()
 
     return Mouse.ELSE
 

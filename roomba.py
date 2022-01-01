@@ -20,6 +20,11 @@ class Roomba:
     buttonInner.setFill('grey')
     return [roomba, buttonOuter, buttonLight, buttonInner]
 
+  def reset(self, x = 0, y = 0):
+    dx = x - self.center.x
+    dy = y - self.center.y
+    self.move(dx, dy)
+
   def draw(self, win):
     for shape in self.shape:
       shape.draw(win)
