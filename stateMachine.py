@@ -117,17 +117,20 @@ class StateMachine:
 
   def takeOneStep(self):
     direction = self.detectMove()
-    if (direction is not None):
+    if (direction is None):
+      return
+    tileIsInRoom = self.room.inRoom(self.roomba.center, direction)
+    if (tileIsInRoom):
       newLocation = self.room.getCoordinates(self.roomba.center, direction)
       self.room.markVisited(self.roomba.center, direction, self.window)
-      self.roomba.undraw()
       self.moveRoomba(newLocation)
-      self.roomba.draw(self.window)
 
   def moveRoomba(self, newLocation):
+    self.roomba.undraw()
     dx = newLocation.x - self.roomba.center.x
     dy = newLocation.y - self.roomba.center.y
     self.roomba.move(dx, dy)
+    self.roomba.draw(self.window)
   
   def detectMove(self):
     moves = {'Up': Direction.UP, 'Down': Direction.DOWN, 'Left': Direction.LEFT, "Right": Direction.RIGHT}

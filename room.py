@@ -97,14 +97,13 @@ class Room:
     return newPoint
 
   def markVisited(self, point, direction, win):
-    if(self.legalMove(point)):
-      newTile = Tile(point, self.radius, direction)
-      newTile.draw(win)
-      coord = (point.x, point.y)
-      if(not self.tileGraph.__contains__(coord)):
-        self.tileGraph[coord] = []
-      self.tileGraph[coord].append(newTile)
-      self.visitedGraph[coord] = True
+    newTile = Tile(point, self.radius, direction)
+    newTile.draw(win)
+    coord = (point.x, point.y)
+    if(not self.tileGraph.__contains__(coord)):
+      self.tileGraph[coord] = []
+    self.tileGraph[coord].append(newTile)
+    self.visitedGraph[coord] = True
 
   def reset(self):
     for tileList in self.tileGraph.values():
@@ -112,17 +111,19 @@ class Room:
         tile.undraw()
     self.tileGraph = {}
 
-  '''
-    Implement this function
-  '''
-  def legalMove(self, point):
-    return True
+  # '''
+  #   Implement this function
+  # '''
+  # def legalMove(self, start, direction):
+  #   newPoint = self.getCoordinates(start, direction)
+  #   return self.inRoom(newPoint)
     
-  def inRoom(self, direction):
-    newPoint = self.getNextStep(direction)
-    return self.graph.__contains__((newPoint.getX(), newPoint.getY()))
+  def inRoom(self, start, direction):
+    newPoint = self.getCoordinates(start, direction)
+    return self.visitedGraph.__contains__((newPoint.x, newPoint.y))
 
   # i.e. not visited, the graph contains this square and it's dirty
-  def dirtySquare(self, direction):
-    newPoint = self.getNextStep(direction)
-    return self.inRoom(direction) and not self.graph[(newPoint.getX(), newPoint.getY())]
+  def dirtySquare(self, start, direction):
+    newPoint = self.getCoordinates(start, direction)
+    coord = (newPoint.x, newPoint.y)
+    return self.visitedGraph.__contains__(coord) and not self.visitedGraph[coord]
