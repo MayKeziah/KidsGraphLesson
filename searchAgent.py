@@ -1,6 +1,6 @@
 import time
 
-from enums import Mouse
+from enums import Direction, Mouse
 
 class SearchAgent:
   def __init__(self, win, room, roomba, checkMouseFn):
@@ -9,27 +9,42 @@ class SearchAgent:
     self.room = room
     self.roomba = roomba
     self.exitCommandRecieved = False
-    self.cleanAll()
+    while(self.cleanAll()):
+      time.sleep(1)
 
   def cleanAll(self):
-    while(not self.isTerminal()):
+    direction = self.getDirection()
+    while(direction is not None):
       mouse = self.checkMouseFn()
       if (mouse == Mouse.EXIT):
         self.exitCommandRecieved = True
         break
-      if(mouse == Mouse.MODE):
+      if (mouse == Mouse.MODE):
         break
-      self.takeOneStep()
+      if (mouse == Mouse.RESET):
+        return True
+      self.takeOneStep(direction)
+      direction = self.getDirection()
       time.sleep(1)
-
-  '''
-    Implement function
-  '''
-  def isTerminal(self):
     return False
 
   '''
     Implement function
   '''
-  def takeOneStep(self):
-    print('step')
+  def getDirection(self):
+    directions = [Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT]
+    for option in directions:
+      isInRoom = self.room.inRoom(self.roomba.center, option)
+      tileIsDirty = self.room.isDirty(self.roomba.center, option)
+      if (isInRoom and tileIsDirty):
+        return option
+    return None
+
+  '''
+    Implement function
+  '''
+  def takeOneStep(self, direction):
+    currentTile = self.roomba.center
+    nextTile = self.room.getTile(currentTile, direction)
+    self.room.cleanCurrentTile(currentTile, direction, self.window)
+    self.roomba.moveTo(nextTile)

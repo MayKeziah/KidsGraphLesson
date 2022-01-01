@@ -1,7 +1,8 @@
 import graphics as g
 
 class Roomba:
-  def __init__(self, center, radius):
+  def __init__(self, center, radius, window):
+      self.window = window
       self.center = center
       self.radius = radius
       self.shape = self.__initShape()
@@ -21,9 +22,7 @@ class Roomba:
     return [roomba, buttonOuter, buttonLight, buttonInner]
 
   def reset(self, x = 0, y = 0):
-    dx = x - self.center.x
-    dy = y - self.center.y
-    self.move(dx, dy)
+    self.moveTo(g.Point(x, y))
 
   def draw(self, win):
     for shape in self.shape:
@@ -32,6 +31,13 @@ class Roomba:
   def undraw(self):
     for shape in self.shape:
           shape.undraw()
+
+  def moveTo(self, newLocation):
+    self.undraw()
+    dx = newLocation.x - self.center.x
+    dy = newLocation.y - self.center.y
+    self.move(dx, dy)
+    self.draw(self.window)
 
   def move(self, dx, dy):
     self.center.move(dx, dy)

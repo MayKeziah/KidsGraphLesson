@@ -47,7 +47,7 @@ class StateMachine:
     self.startPosition = g.Point(0, 0)
 
     self.window = g.GraphWin(self.title, (width+2)*self.gridConversionCoeficient, (height+2)*self.gridConversionCoeficient)
-    self.roomba = Roomba(self.startPosition, self.radius)
+    self.roomba = Roomba(self.startPosition, self.radius, self.window)
     self.room = Room(width, height, self.startPosition)
 
     self.modeManual = 'Mode: Manual'
@@ -109,6 +109,7 @@ class StateMachine:
 
     if(self.resetBtn.clicked(mouse)):
       self.reset()
+      return Mouse.RESET
 
     return Mouse.ELSE
 
@@ -121,16 +122,9 @@ class StateMachine:
       return
     tileIsInRoom = self.room.inRoom(self.roomba.center, direction)
     if (tileIsInRoom):
-      newLocation = self.room.getCoordinates(self.roomba.center, direction)
-      self.room.markVisited(self.roomba.center, direction, self.window)
-      self.moveRoomba(newLocation)
-
-  def moveRoomba(self, newLocation):
-    self.roomba.undraw()
-    dx = newLocation.x - self.roomba.center.x
-    dy = newLocation.y - self.roomba.center.y
-    self.roomba.move(dx, dy)
-    self.roomba.draw(self.window)
+      newLocation = self.room.getTile(self.roomba.center, direction)
+      self.room.cleanCurrentTile(self.roomba.center, direction, self.window)
+      self.roomba.moveTo(newLocation)
   
   def detectMove(self):
     moves = {'Up': Direction.UP, 'Down': Direction.DOWN, 'Left': Direction.LEFT, "Right": Direction.RIGHT}
