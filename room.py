@@ -63,11 +63,11 @@ class Room:
     self.width = width
     self.height = height
 
-    self.visitedGraph = self.__initGraph()
+    self.visitedGraph = self.__initVisitedGraph()
     self.tileGraph = {}
     self.grid = self.__initGrid()
 
-  def __initGraph(self):
+  def __initVisitedGraph(self):
     graph = {}
     for row in range(self.height):
       for col in range(self.width):
@@ -84,7 +84,7 @@ class Room:
   def draw(self, win):
     self.grid.draw(win)
 
-  def getCoordinates(self, roombaCoords, direction):
+  def getTile(self, roombaCoords, direction):
     newPoint = roombaCoords.clone()
     if (direction == Direction.UP):
       newPoint.move(0, 1)
@@ -96,7 +96,7 @@ class Room:
       newPoint.move(-1, 0)
     return newPoint
 
-  def markVisited(self, point, direction, win):
+  def cleanCurrentTile(self, point, direction, win):
     newTile = Tile(point, self.radius, direction)
     newTile.draw(win)
     coord = (point.x, point.y)
@@ -106,6 +106,7 @@ class Room:
     self.visitedGraph[coord] = True
 
   def reset(self):
+    self.visitedGraph = self.__initVisitedGraph()
     for tileList in self.tileGraph.values():
       for tile in tileList:
         tile.undraw()
@@ -119,11 +120,11 @@ class Room:
   #   return self.inRoom(newPoint)
     
   def inRoom(self, start, direction):
-    newPoint = self.getCoordinates(start, direction)
+    newPoint = self.getTile(start, direction)
     return self.visitedGraph.__contains__((newPoint.x, newPoint.y))
 
   # i.e. not visited, the graph contains this square and it's dirty
-  def dirtySquare(self, start, direction):
-    newPoint = self.getCoordinates(start, direction)
+  def isDirty(self, start, direction):
+    newPoint = self.getTile(start, direction)
     coord = (newPoint.x, newPoint.y)
     return self.visitedGraph.__contains__(coord) and not self.visitedGraph[coord]

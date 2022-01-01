@@ -10,3 +10,4 @@ class Mouse(enum.Enum):
   EXIT = 0
   MODE = 1
   ELSE = 2
+  RESET = 3
