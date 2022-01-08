@@ -32,10 +32,15 @@ class SearchAgent:
     Implement function
   '''
   def getDirection(self):
-    return None
+    return Direction.UP
 
   '''
     Implement function
   '''
   def takeOneStep(self, direction):
-    return
+    currentTile = self.roomba.center
+    nextTile = self.room.getTile(currentTile, direction)
+    tileInRoom = self.room.inRoom(currentTile, direction)
+    if(tileInRoom):
+      self.room.cleanCurrentTile(currentTile, direction, self.window)
+      self.roomba.moveTo(nextTile)
